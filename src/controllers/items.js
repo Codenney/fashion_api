@@ -3,6 +3,21 @@ const db = require('../../config/database');
 
 // exports.getAllItems = async (req, res) = {}
 
+exports.getAllItems = async (req, res) => {
+    try {
+        const allItems = await db.any('SELECT * FROM items ORDER BY id DESC');
+        res.status(201).json({
+            status: 'success',
+            message: allItems
+        })
+    } catch(err) {
+        res.status(400).json({
+            status: 'fail',
+            message: err
+        })
+    }
+};
+
 exports.createItem = async (req, res) => {
     try {
         const {name, type, gender, color} = req.body;
