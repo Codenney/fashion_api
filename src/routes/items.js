@@ -6,7 +6,7 @@ const router = express.Router();
 router
 .route('/').post(itemController.createItem)
 .get(itemController.getAllItems)
-// .patch(itemController.updateItem);
+.put(itemController.updateItem);
 
 router.route('/:id').delete(itemController.isValid, itemController.deleteItem);
 

@@ -12,7 +12,7 @@ exports.getAllItems = async (req, res) => {
             const itemsCount = (await db.any('SELECT * FROM items ORDER BY id DESC')).length;
             if(offset >= itemsCount) throw new Error("This page doesn't exist");
         }
-        const allItems = await db.any('SELECT * FROM items ORDER BY id DESC LIMIT $(limit) OFFSET $(offset)', {limit, offset});
+        const allItems = await db.any(`SELECT * FROM items ORDER BY id DESC LIMIT $(limit) OFFSET $(offset)`, {limit, offset});
         res.status(201).json({
             status: 'success',
             message: allItems
@@ -65,6 +65,23 @@ exports.deleteItem = async (req, res) => {
             status: 'success',
             message: null
         })
+    } catch(err) {
+        res.status(404).json({
+            status: 'fail',
+            message: err
+        })
+    }
+}
+
+exports.updateItem = async (req, res) => {
+    try {
+        const {name, type, gender, color, id} = req.body;
+        const updateOne = await db.one('UPDATE Items SET name = ${name}, type = ${type}, gender = ${gender}, color = ${color} WHERE id = ${id} RETURNING id', 
+        {name, type, gender, color, id});
+        res.status(200).json({
+            status: 'success',
+            message: 'Update successful!'
+        });
     } catch(err) {
         res.status(404).json({
             status: 'fail',
