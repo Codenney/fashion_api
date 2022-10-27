@@ -1,8 +1,6 @@
 const express = require('express');
 const db = require('../../config/database');
 
-// exports.getAllItems = async (req, res) = {}
-
 exports.getAllItems = async (req, res) => {
     try {
         const allItems = await db.any('SELECT * FROM items ORDER BY id DESC');
