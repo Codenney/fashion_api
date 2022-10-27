@@ -1,7 +1,22 @@
 /* Replace with your SQL commands */
-CREATE TABLE IF NOT EXISTS public.users(
+--DROP TABLE IF EXISTS users;
+
+CREATE TABLE IF NOT EXISTS users(
 	id SERIAL NOT NULL PRIMARY KEY, 
 	name VARCHAR(50) NOT NULL, 
 	email VARCHAR(100) NOT NULL UNIQUE,
     password VARCHAR(100) NOT NULL UNIQUE
+);
+
+
+--DROP TABLE IF EXISTS items;
+
+--CREATE TYPE size AS ENUM ('M', 'S', 'L');
+CREATE TYPE their_gender AS ENUM ('Male', 'Female');
+CREATE TABLE IF NOT EXISTS items(
+	id SERIAL NOT NULL PRIMARY KEY, 
+	name VARCHAR(50) NOT NULL, 
+	type VARCHAR(100) NOT NULL UNIQUE,
+    gender their_gender,
+    color VARCHAR(20) NOT NULL UNIQUE
 );
