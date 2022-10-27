@@ -3,7 +3,16 @@ const db = require('../../config/database');
 
 exports.getAllItems = async (req, res) => {
     try {
-        const allItems = await db.any('SELECT * FROM items ORDER BY id DESC');
+        const page = req.query.page * 1 || 1;
+        const limit = req.query.limit * 1 || 5;
+        const offset = (page - 1) * limit;
+
+        if(page)
+        {
+            const itemsCount = (await db.any('SELECT * FROM items ORDER BY id DESC')).length;
+            if(offset >= itemsCount) throw new Error("This page doesn't exist");
+        }
+        const allItems = await db.any('SELECT * FROM items ORDER BY id DESC LIMIT $(limit) OFFSET $(offset)', {limit, offset});
         res.status(201).json({
             status: 'success',
             message: allItems
