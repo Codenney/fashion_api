@@ -23,3 +23,30 @@ exports.createItem = async (req, res) => {
         })
     }
 }
+
+exports.isValid = (req, res, next) => {
+    if(isNaN(req.params.id)) {
+        res.status(404).json({
+            status: 'fail',
+            message: 'provide a valid item number'
+        })
+    } else {
+        next();
+    }
+}
+
+exports.deleteItem = async (req, res) => {
+    try {
+        const id = req.params.id * 1;
+        await db.one('DELETE FROM items WHERE id = $(id) RETURNING id', {id});
+        res.status(204).json({
+            status: 'success',
+            message: null
+        })
+    } catch(err) {
+        res.status(404).json({
+            status: 'fail',
+            message: err
+        })
+    }
+}
