@@ -12,11 +12,14 @@ CREATE TABLE IF NOT EXISTS users(
 --DROP TABLE IF EXISTS items;
 
 --CREATE TYPE size AS ENUM ('M', 'S', 'L');
-CREATE TYPE their_gender AS ENUM ('Male', 'Female');
+--CREATE TYPE gender AS ENUM ('Male', 'Female');
 CREATE TABLE IF NOT EXISTS items(
 	id SERIAL NOT NULL PRIMARY KEY, 
 	name VARCHAR(50) NOT NULL, 
-	type VARCHAR(100) NOT NULL UNIQUE,
-    gender their_gender,
-    color VARCHAR(20) NOT NULL UNIQUE
+	type VARCHAR(100) NOT NULL,
+    gender VARCHAR(50) NOT NULL,
+    color VARCHAR(20) NOT NULL
 );
+
+INSERT INTO items (name, type, gender, color) VALUES('Alvicci', 'shirt', 'Male', 'white');
+INSERT INTO items (name, type, gender, color) VALUES('Olaide', 'gown', 'Female', 'purple');

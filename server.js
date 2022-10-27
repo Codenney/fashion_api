@@ -1,21 +1,7 @@
-const pgp = require('pg-promise')(/*options*/);
-const dotenv = require('dotenv');
-dotenv.config({path: './config.env'});
 const app = require('./src/app');
+const db = require('./config/database')
 
-const DB_PORT = process.env.DB_PORT;
-const PASSWORD = process.env.PASSWORD;
-
-const cn = {
-    host: 'localhost',
-    port: DB_PORT,
-    database: 'fashiondb',
-    user: 'postgres',
-    password: PASSWORD
-};
-
-const db = pgp(cn);
-
+// db.one('SELECT * FROM items WHERE name = $1', 'alvicci')
 db.one("SELECT $1 AS value", 111)
     .then(function (result) {
         console.log('Connected to DB successfully');
@@ -27,6 +13,8 @@ db.one("SELECT $1 AS value", 111)
         });
         
 const PORT = process.env.PORT || 3000;
+
+module.exports = db;
 
 app.listen(PORT, () => {
     console.log(`The app is currently running on localhost:${PORT}...`);
