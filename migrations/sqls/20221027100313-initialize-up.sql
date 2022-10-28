@@ -8,6 +8,7 @@ CREATE TABLE IF NOT EXISTS users(
     password VARCHAR(100) NOT NULL UNIQUE
 );
 
+INSERT INTO items (name, email, password) VALUES('Alvicci', 'kenney9224@gmail.com', 'Vnp-1234');
 
 --DROP TABLE IF EXISTS items;
 
