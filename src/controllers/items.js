@@ -13,7 +13,7 @@ exports.getAllItems = async (req, res) => {
             if(offset >= itemsCount) throw new Error("This page doesn't exist");
         }
         const allItems = await db.any(`SELECT * FROM items ORDER BY id DESC LIMIT $(limit) OFFSET $(offset)`, {limit, offset});
-        res.status(201).json({
+        res.status(200).json({
             status: 'success',
             message: allItems
         })
