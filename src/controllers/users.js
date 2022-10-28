@@ -15,7 +15,6 @@ exports.createUser = async (req, res) => {
         }
         password = await bcrypt.hash(password, 12);
         const token = jwt.sign({userEmail: email}, process.env.JWT_SECRET, {expiresIn: process.env.EXPIRES_IN});
-        console.log(token);
         const newUser = await db.one('INSERT INTO users(name, email, password) VALUES(${name}, ${email}, ${password}) RETURNING id', {
             name: name, 
             email: email, 
@@ -23,6 +22,7 @@ exports.createUser = async (req, res) => {
         });
         res.status(201).json({
             status: 'success',
+            token: token,
             message: newUser
         })
     } catch(err) {
