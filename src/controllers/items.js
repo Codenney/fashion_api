@@ -1,7 +1,7 @@
 const express = require('express');
 const db = require('../../config/database');
 
-exports.getAllItems = async (req, res) => {
+exports.getAllItems = async (req, res, next) => {
     try {
         const page = req.query.page * 1 || 1;
         const limit = req.query.limit * 1 || 5;
@@ -10,7 +10,11 @@ exports.getAllItems = async (req, res) => {
         if(page)
         {
             const itemsCount = (await db.any('SELECT * FROM items ORDER BY id DESC')).length;
-            if(offset >= itemsCount) throw new Error("This page doesn't exist");
+            if(offset > itemsCount) {
+                const err = new Error("This page doesn't exist");
+                err.statusCode = 404;
+                return next(err);
+            } 
         }
         const allItems = await db.any(`SELECT * FROM items ORDER BY id DESC LIMIT $(limit) OFFSET $(offset)`, {limit, offset});
         res.status(200).json({
@@ -18,10 +22,7 @@ exports.getAllItems = async (req, res) => {
             message: allItems
         })
     } catch(err) {
-        res.status(400).json({
-            status: 'fail',
-            message: err
-        })
+        next(err);
     }
 };
 
@@ -39,10 +40,7 @@ exports.createItem = async (req, res) => {
             message: newItem
         })
     } catch(err) {
-        res.status(400).json({
-            status: 'fail',
-            message: err
-        })
+        next(err)
     }
 }
 

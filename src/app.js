@@ -1,6 +1,7 @@
 const express = require('express');
 const itemRouter = require('./routes/items');
 const userRouter = require('./routes/users');
+const { handleError } = require('./utils/errors')
 
 const app = express();
 
@@ -15,5 +16,7 @@ app.get('*', (req, res) => {
         message: 'Page not found! Kindly reconfirm URL!',
     });
 });
+
+app.use(handleError);
 
 module.exports = app;
