@@ -10,7 +10,7 @@ exports.getAllItems = async (req, res, next) => {
         if(page)
         {
             const itemsCount = (await db.any('SELECT * FROM items ORDER BY id DESC')).length;
-            if(offset >= itemsCount) {
+            if(offset > itemsCount) {
                 const err = new Error("This page doesn't exist");
                 err.statusCode = 404;
                 return next(err);
