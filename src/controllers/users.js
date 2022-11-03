@@ -1,6 +1,6 @@
 const db = require('../../config/database');
-// const dotenv = require('dotenv');
-// dotenv.config({path: './config.env'});
+const AppError = require('../utils/appError');
+const catchAsync = require('../utils/catchAsync');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 
@@ -14,12 +14,11 @@ const signToken = ({email}) => {
     return jwt.sign({email}, process.env.JWT_SECRET, {expiresIn: process.env.EXPIRES_IN})
 }
 
-exports.createUser = async (req, res) => {
-    try {
+exports.createUser = catchAsync(async (req, res, next) => {
         let {name, email, password} = req.body;
         if(email) {
             const userName = (await db.oneOrNone('SELECT name FROM users WHERE email = $1', email));
-            if(userName) throw new Error("User with the provide details exist");
+            if(userName) return next(new AppError("User with the provide details exist"), 401);
         }
         password = await bcrypt.hash(password, 12);
         const token = jwt.sign({userEmail: email}, process.env.JWT_SECRET, {expiresIn: process.env.EXPIRES_IN});
@@ -32,27 +31,20 @@ exports.createUser = async (req, res) => {
             status: 'success',
             token: token,
             message: newUser
-        })
-    } catch(err) {
-        res.status(400).json({
-            status: 'fail',
-            message: err
-        })
-    }
-};
+        });
+});
 
-exports.loginUser = async (req, res) => {
-    try {
+exports.loginUser = catchAsync(async (req, res, next) => {
         const {email, password} = req.body;
         // confirm email and password were provided
-        if(!email || !password) throw new Error("Please provide email and password");
+        if(!email || !password) return next(new AppError("Please provide email and password", 401));
 
         // Check if the email exist on the DB
         const user = await db.oneOrNone('SELECT * FROM users WHERE email = $1', email);
 
         // Check if provided password is correct and user exist on the DB
         if(!user || !(await correctPassword(password, user.password))) {
-            throw new Error("Incorrect email or password");
+            return next(new AppError("Incorrect email or password", 401));
         };
 
         // If everything is ok, send token to the client
@@ -61,10 +53,4 @@ exports.loginUser = async (req, res) => {
             status: 'success',
             token
         })
-    } catch (err) {
-        res.status(401).json({
-            status: 'fail',
-            message: err
-        })
-    }
-};
+    });
